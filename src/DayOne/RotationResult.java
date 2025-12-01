@@ -1,4 +1,3 @@
 package DayOne;
 
-public record RotationResult(int zeros, int result) {
-}
+public record RotationResult(int value, int zeros){}

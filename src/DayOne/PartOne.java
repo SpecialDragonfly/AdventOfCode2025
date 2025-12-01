@@ -8,15 +8,15 @@ public class PartOne {
     public int run(String file) {
         Vector<String> lines = Util.readFile(file);
 
-        SimpleAccumulator accumulator = lines.stream()
-                .reduce(new SimpleAccumulator(50, 0), (acc, line) -> {
-                    int x = line.startsWith("L")? anticlockwise(line, acc.value()) : clockwise(line, acc.value());
-                    if (x == 0) {
-                        return new SimpleAccumulator(x, acc.count() + 1);
-                    }
-                    return new SimpleAccumulator(x, acc.count());
-                }, (a,b) -> b);
-        return accumulator.count();
+        RotationResult accumulator = lines.stream()
+            .reduce(new RotationResult(50, 0), (acc, line) -> {
+                int x = line.startsWith("L")? anticlockwise(line, acc.value()) : clockwise(line, acc.value());
+                if (x == 0) {
+                    return new RotationResult(x, acc.zeros() + 1);
+                }
+                return new RotationResult(x, acc.zeros());
+            }, (a,b) -> b);
+        return accumulator.zeros();
     }
 
     private int anticlockwise(String line, int start) {

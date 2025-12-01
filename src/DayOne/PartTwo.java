@@ -7,22 +7,21 @@ import java.util.Vector;
 public class PartTwo {
     public int run(String file) {
         Vector<String> lines = Util.readFile(file);
-        SimpleAccumulator accumulator = lines.stream()
-                .reduce(new SimpleAccumulator(50, 0), (acc, line) -> {
-                    RotationResult x = line.startsWith("L")? antiClockwise(line, acc) : clockwise(line, acc);
-                    return new SimpleAccumulator(x.result(), x.zeros());
-                }, (a,b) -> b);
-        return accumulator.count();
+        RotationResult accumulator = lines.stream()
+            .reduce(new RotationResult(50, 0), (acc, line) ->
+                line.startsWith("L")? antiClockwise(line, acc) : clockwise(line, acc),
+            (a, b) -> b);
+        return accumulator.zeros();
     }
 
-    private RotationResult antiClockwise(String line, SimpleAccumulator previousResult) {
+    private RotationResult antiClockwise(String line, RotationResult previousResult) {
         int number = Integer.parseInt(line.substring(1));
-        int zeros = (number/100) + previousResult.count();
+        int zeros = (number/100) + previousResult.zeros();
         number = number % 100; // Remove whole rotations
 
         // If we're not going to move after checking, don't move.
         if (number == 0) {
-            return new RotationResult(zeros, 0);
+            return new RotationResult(0, zeros);
         }
 
         int start = previousResult.value();
@@ -35,28 +34,26 @@ public class PartTwo {
             if (start < 0) {
                 start += 100;
             }
-
-            return new RotationResult(zeros, start);
         }
-        return new RotationResult(zeros, start);
+        return new RotationResult(start, zeros);
     }
 
-    private RotationResult clockwise(String line, SimpleAccumulator previousResult) {
+    private RotationResult clockwise(String line, RotationResult previousResult) {
         int number = Integer.parseInt(line.substring(1));
-        int zeros = (number/100) + previousResult.count();
+        int zeros = (number/100) + previousResult.zeros();
 
         number = number % 100; // Remove whole rotations
 
         if (number == 0) {
-            return new RotationResult(zeros, 0);
+            return new RotationResult(0, zeros);
         }
 
         int start = previousResult.value();
         start += number;
         if (start >= 100) {
             zeros += 1;
-            return new RotationResult(zeros, start % 100);
+            return new RotationResult(start % 100, zeros);
         }
-        return new RotationResult(zeros, start);
+        return new RotationResult(start, zeros);
     }
 }
