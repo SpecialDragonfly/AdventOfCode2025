@@ -3,6 +3,8 @@ package util;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -14,6 +16,10 @@ public class Util {
             e.printStackTrace();
         }
         return new Vector<>();
+    }
+
+    public static List<String> readSingleLineFileAsCsv(String file) {
+        return Arrays.stream(Util.getFileAsLine(file).split(",")).toList();
     }
 
     public static String getFileAsLine(String file) {
