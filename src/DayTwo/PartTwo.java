@@ -8,15 +8,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PartTwo {
-    public void run(String file) {
+    public BigInteger run(String file) {
         List<String> lines = Util.readSingleLineFileAsCsv(file);
-        BigInteger sum = new BigInteger("0");
-        for (String line : lines) {
+        return lines.stream().reduce(new BigInteger("0"), (acc, line) -> {
             // Split on a hyphen to get both parts.
             String[] parts = line.split("-");
             BigInteger min = new BigInteger(parts[0]);
             BigInteger max = new BigInteger(parts[1]);
 
+            BigInteger sum = new BigInteger("0");
             try {
                 Pattern p = Pattern.compile("^(\\d+?)\\1+$");
                 while (min.compareTo(max) <= 0) {
@@ -30,7 +30,7 @@ public class PartTwo {
             } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
             }
-        }
-        System.out.println("Sum of numbers was " + sum);
+            return acc.add(sum);
+        }, BigInteger::add);
     }
 }

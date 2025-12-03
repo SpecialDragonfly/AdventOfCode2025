@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Vector;
 
 public class PartOne {
-    public void run(String file) {
+    public int run(String file) {
         Vector<String> lines = Util.readFile(file);
         int sum = 0;
         for (String line : lines) {
@@ -32,6 +32,6 @@ public class PartOne {
             }
             sum += ((max*10) + secondMax);
         }
-        System.out.println("Sum: " + sum);
+        return sum;
     }
 }

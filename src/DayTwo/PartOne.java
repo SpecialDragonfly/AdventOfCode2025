@@ -8,16 +8,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PartOne {
-    public void run(String file) {
+    public BigInteger run(String file) {
         List<String> lines = Util.readSingleLineFileAsCsv(file);
-        BigInteger sum = new BigInteger("0");
-        for (String line : lines) {
-            System.out.println("Line: " + line);
+
+        return lines.stream().reduce(new  BigInteger("0"), (acc, line) -> {
             // Split on a hyphen to get both parts.
             String[] parts = line.split("-");
             BigInteger min = new BigInteger(parts[0]);
             BigInteger max = new BigInteger(parts[1]);
 
+            BigInteger sum = new BigInteger("0");
             try {
                 Pattern p = Pattern.compile("^(\\d+?)\\1$");
                 while (min.compareTo(max) <= 0) {
@@ -38,26 +38,20 @@ public class PartOne {
             } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
             }
-        }
-        System.out.println("Sum of numbers was " + sum);
+            return acc.add(sum);
+        }, BigInteger::add);
     }
 
     private static BigInteger getNextInt(BigInteger min) throws Exception {
         // We know min has an odd number of digits. We need an even number of digits.
         // 1 -> 11, 111 -> 1010, 11111 -> 101101
-        switch (min.toString().length()) {
-            case 1:
-                return new BigInteger("11");
-            case 3:
-                return new BigInteger("1010");
-            case 5:
-                return new BigInteger("101101");
-            case 7:
-                return new BigInteger("10011001");
-            case 9:
-                return new BigInteger("1000110001");
-            default:
-                throw new Exception("Unexpected length: " + min.toString().length());
-        }
+        return switch (min.toString().length()) {
+            case 1 -> new BigInteger("11");
+            case 3 -> new BigInteger("1010");
+            case 5 -> new BigInteger("101101");
+            case 7 -> new BigInteger("10011001");
+            case 9 -> new BigInteger("1000110001");
+            default -> throw new Exception("Unexpected length: " + min.toString().length());
+        };
     }
 }

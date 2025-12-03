@@ -3,25 +3,21 @@ package DayThree;
 import util.Util;
 
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Vector;
 
 public class PartTwo {
+
     public BigInteger run(String file) {
         Vector<String> lines = Util.readFile(file);
-        BigInteger sum = new BigInteger("0");
-        for (String line : lines) {
+        return lines.stream().reduce(new BigInteger("0"), (acc, line) -> {
             Vector<String> result = new Vector<>();
             int index = -1;
             for (int limit = 11; limit >= 0; limit--) {
                 index = this.findMaxNumberIndex(line, index + 1, limit);
                 result.add(line.substring(index, index + 1));
             }
-            sum = sum.add(new BigInteger(this.concatVector(result)));
-        }
-        return sum;
+            return acc.add(new BigInteger(this.concatVector(result)));
+        }, BigInteger::add);
     }
 
     public String concatVector(Vector<String> vector) {
