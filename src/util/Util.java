@@ -29,4 +29,13 @@ public class Util {
 
         return sb.toString();
     }
+
+    public static Vector<Vector<String>> readFileAsArray(String file) {
+        Vector<Vector<String>> array = new Vector<>();
+        Vector<String> lines = Util.readFile(file);
+        for (String line : lines) {
+            array.add(new Vector<>(Arrays.asList(line.split(""))));
+        }
+        return array;
+    }
 }
