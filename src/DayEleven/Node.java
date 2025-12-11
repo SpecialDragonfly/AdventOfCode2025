@@ -10,4 +10,9 @@ public record Node(String id, Vector<String> outputs) {
             }
         }
     }
+
+    public void replaceAll(Vector<String> value, String key) {
+        outputs.remove(key);
+        outputs.addAll(value);
+    }
 }

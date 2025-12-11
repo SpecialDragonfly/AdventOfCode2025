@@ -7,7 +7,7 @@ import java.util.*;
 public class DayEleven {
     private static Map<String, Node> nodes = new HashMap<>();
     public static void main(String[] args) {
-        Vector<String> lines = Util.readFile("./src/DayEleven/input.txt");
+        Vector<String> lines = Util.readFile("./src/DayEleven/test2.txt");
         for (String line : lines) {
             String[] parts = line.split(":");
             Vector<String> outputs = new Vector<>(List.of(parts[1].trim().split(" ")));
@@ -19,24 +19,27 @@ public class DayEleven {
     }
 
     private static void shortenNodes() {
-        HashMap<String, String> nodesWithOnlyOneChild = new HashMap<>();
-        for (Map.Entry<String, Node> entry : nodes.entrySet()) {
-            if (entry.getKey().equals("fft") || entry.getKey().equals("dac")) {
-                continue;
+        int shortening;
+        do {
+            shortening = 0;
+            HashMap<String, Vector<String>> nodesNotFFTOrDAC = new HashMap<>();
+            for (Map.Entry<String, Node> entry : nodes.entrySet()) {
+                if (entry.getKey().equals("fft") || entry.getKey().equals("dac")) {
+                    continue;
+                }
+                if (!entry.getValue().outputs().contains("fft") && !entry.getValue().outputs().contains("dac")) {
+                    nodesNotFFTOrDAC.put(entry.getKey(), entry.getValue().outputs());
+                    shortening++;
+                }
             }
-            if (entry.getValue().outputs().size() == 1) {
-                nodesWithOnlyOneChild.put(entry.getKey(), entry.getValue().outputs().getFirst());
-            }
-        }
-        System.out.println("There were " + nodesWithOnlyOneChild.size() + " shortenings");
-        for (Map.Entry<String, Node> node : nodes.entrySet()) {
-            for (Map.Entry<String, String> onlyChild : nodesWithOnlyOneChild.entrySet()) {
-                if (node.getValue().outputs().contains(onlyChild.getKey())) {
-                    nodes.get(node.getKey()).replaceValue(onlyChild.getKey(), onlyChild.getValue());
+            System.out.println("There were " + nodesNotFFTOrDAC.size() + " shortenings");
+            for (Map.Entry<String, Node> node : nodes.entrySet()) {
+                for (Map.Entry<String, Vector<String>> unimportantNodes : nodesNotFFTOrDAC.entrySet()) {
+                    nodes.get(node.getKey()).replaceAll(unimportantNodes.getValue(), unimportantNodes.getKey());
                     nodes.remove(node.getKey());
                 }
             }
-        }
+        } while (shortening > 0);
     }
 
     private static int followPath(String nodeId, boolean seenFFT, boolean seenDAC, int pathLength) {
