@@ -9,9 +9,9 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DayTen {
-    public static void main(String[] args) {
-        Vector<String> lines = Util.readFile("./src/DayTen/test2.txt");
+public class PartOne {
+    public void run() {
+        Vector<String> lines = Util.readFile("./src/DayTen/input.txt");
         Pattern p = Pattern.compile("\\[(.*?)](.*?)\\{(.*?)}");
         Vector<Machine> machines = new Vector<>();
         for (String line : lines) {
@@ -33,38 +33,21 @@ public class DayTen {
 
         int sum = 0;
         for (Machine machine : machines) {
-            Vector<Integer> blankJoltage = new Vector<>();
-            for (int i = 0; i < machine.getJoltage().size(); i++) {
-                blankJoltage.add(0);
-            }
-            Set<Vector<Integer>> joltages = new HashSet<>();
-            joltages.add(blankJoltage);
+            Set<Vector<Boolean>> states = new HashSet<>();
+            states.add(machine.getState());
             int iteration = 0;
             while (true) {
-                if (joltages.isEmpty()) {
-                    System.out.println("Iteration " + iteration + ": No more possibilities.");
-                    break;
-                }
-                System.out.println("Iteration " + iteration + ": " + joltages.size() + " possibilities.");
-                Set<Vector<Integer>> newJoltages = new HashSet<>();
-                int trimmed = 0;
-                for (Vector<Integer> joltage : joltages) {
+                Set<Vector<Boolean>> newStates = new HashSet<>();
+                for (Vector<Boolean> state : states) {
                     for (Button button : machine.getButtons()) {
-                        Vector<Integer> possible = button.pushForJoltage((Vector<Integer>) joltage.clone());
-                        // If any of the joltages are over, skip this possibility.
-                        if (machine.checkViable(possible)) {
-                            newJoltages.add(possible);
-                        } else {
-                            trimmed++;
-                        }
+                        newStates.add(button.push((Vector<Boolean>) state.clone()));
                     }
                 }
-                System.out.println("\tTrimmed: " + trimmed);
-                if (newJoltages.contains(machine.getJoltage())) {
+                if (newStates.contains(machine.getGoal())) {
                     iteration++;
                     break;
                 }
-                joltages = newJoltages;
+                states = newStates;
                 iteration++;
             }
             sum += iteration;

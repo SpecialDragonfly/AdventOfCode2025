@@ -15,4 +15,11 @@ public class Button {
         }
         return state;
     }
+
+    public Vector<Integer> pushForJoltage(Vector<Integer> joltage) {
+        for (int index : values) {
+            joltage.set(index, joltage.get(index) + 1);
+        }
+        return joltage;
+    }
 }
